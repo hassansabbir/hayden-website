@@ -39,7 +39,7 @@ const Bookings = () => {
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, delay: 0.3, ease: [0.21, 0.47, 0.32, 0.98] }}
-        className="relative z-10 w-full max-w-[540px] bg-white/75 backdrop-blur-[24px] rounded-[32px] p-8 sm:p-12 shadow-[0_8px_40px_rgba(0,0,0,0.12)] border border-white/40"
+        className="relative z-10 w-full max-w-[540px] bg-white/75 backdrop-blur-xl rounded-[32px] p-8 sm:p-12 shadow-[0_8px_40px_rgba(0,0,0,0.12)] border border-white/40"
       >
         <div className="text-center mb-10">
           <motion.div

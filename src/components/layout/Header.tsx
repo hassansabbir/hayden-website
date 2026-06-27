@@ -21,7 +21,7 @@ import useLoginUser from "@/hooks/useUser";
 const navLinks = [
   { name: "Home", href: "/" },
   { name: "Explore Clubs", href: "/explore-clubs" },
-  { name: "View Bookings", href: "/bookings" },
+  // { name: "View Bookings", href: "/bookings" },
   { name: "About Us", href: "/about" },
 ];
 
