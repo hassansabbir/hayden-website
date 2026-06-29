@@ -61,7 +61,7 @@ const SignUp = () => {
       return;
     }
 
-    toast.success("Account created! Welcome to Tea It Up.");
+    toast.success("Account created! Welcome to Tee It Up.");
     router.replace('/');
   };
 

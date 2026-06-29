@@ -400,7 +400,7 @@ const Reserve = () => {
                   htmlFor="agreeToTerms"
                   className="text-[14.5px] text-gray-600 leading-relaxed cursor-pointer pr-4"
                 >
-                  I agree to the Tea It Up{" "}
+                  I agree to the Tee It Up{" "}
                   <span className="font-semibold text-[#0a4a1b]">
                     Membership Terms
                   </span>{" "}
