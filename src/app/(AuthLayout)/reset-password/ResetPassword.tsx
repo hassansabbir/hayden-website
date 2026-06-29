@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { motion } from "framer-motion";
 import z from "zod";
@@ -7,16 +8,24 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import InputFieldPassword from "@/components/form/InputFieldPassword";
 import BottomDot from "../BottomDot";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import { fetchUrl } from "@/lib/fetchUrl";
+import SubmitButton from "@/components/buttons/SubmitButton";
 
 const resetSchema = z.object({
-  password: z.string().min(6),
+  password: z.string().min(6).max(72),
   confirmPassword: z.string().min(6),
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "Passwords do not match",
+  path: ["confirmPassword"],
 });
 
 type ResetFormValues = z.infer<typeof resetSchema>
 
 const ResetPassword = () => {
   const router = useRouter();
+  const [resetTicket, setResetTicket] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const {
     register,
     handleSubmit,
@@ -29,9 +38,33 @@ const ResetPassword = () => {
     }
   })
 
-  const onSubmit = (data: any) => {
-    console.log(data);
-    router.push('/sign-in')
+  useEffect(() => {
+    const storedTicket = window.sessionStorage.getItem("reset-ticket");
+    if (!storedTicket) {
+      // Landed here without verifying an OTP first
+      router.replace("/forgot-password");
+      return;
+    }
+    setResetTicket(storedTicket);
+  }, [router]);
+
+  const onSubmit = async (data: ResetFormValues) => {
+    if (!resetTicket) return;
+    setIsSubmitting(true);
+    try {
+      await fetchUrl("/auth/reset-password", {
+        method: "POST",
+        body: { resetTicket, password: data.password },
+      });
+      window.sessionStorage.removeItem("reset-email");
+      window.sessionStorage.removeItem("reset-ticket");
+      toast.success("Password reset successfully. Please sign in.");
+      router.push('/sign-in');
+    } catch (err: any) {
+      toast.error(err.message || "Failed to reset password.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -55,12 +88,7 @@ const ResetPassword = () => {
           <InputFieldPassword title="New Password" name="password" placeholder="••••••••" register={register} error={errors.password} />
           <InputFieldPassword title="Confirm Password" name="confirmPassword" placeholder="••••••••" register={register} error={errors.confirmPassword} />
 
-          <button
-            type="submit"
-            className="mt-4 w-full rounded-2xl bg-[#064e3b] py-5 text-[17px] font-bold text-white transition-all hover:bg-[#042f24] hover:shadow-lg active:scale-[0.99]"
-          >
-            Sign In
-          </button>
+          <SubmitButton isSubmitting={isSubmitting} title="Reset Password" className="mt-4 py-5 text-[17px]" />
         </form>
       </motion.div>
       {/* Footer Dots */}

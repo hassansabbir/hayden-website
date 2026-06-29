@@ -14,13 +14,19 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+import { cookies } from "next/headers";
 import { UserProvider } from "@/hooks/useUser";
+import { Toaster } from "@/components/ui/sonner";
+import { USER_CACHE_COOKIE, parseUserCacheCookie } from "@/lib/userCache";
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const cookieStore = await cookies();
+  const initialUser = parseUserCacheCookie(cookieStore.get(USER_CACHE_COOKIE)?.value);
+
   return (
     <html
       lang="en"
@@ -28,8 +34,9 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body suppressHydrationWarning>
-        <UserProvider>
+        <UserProvider initialUser={initialUser}>
           {children}
+          <Toaster richColors position="top-center" />
         </UserProvider>
       </body>
     </html>

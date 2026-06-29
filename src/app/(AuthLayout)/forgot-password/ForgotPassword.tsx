@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { motion } from "framer-motion";
 import InputField from "@/components/form/InputField";
@@ -8,6 +9,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import BottomDot from "../BottomDot";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import { fetchUrl } from "@/lib/fetchUrl";
+import SubmitButton from "@/components/buttons/SubmitButton";
 
 const forgotSchema = z.object({
   email: z.string().email()
@@ -17,6 +21,7 @@ type ForgotFormValues = z.infer<typeof forgotSchema>
 
 const ForgotPassword = () => {
   const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const {
     register,
     handleSubmit,
@@ -28,9 +33,20 @@ const ForgotPassword = () => {
     }
   })
 
-  const onSubmit = (data: any) => {
-    console.log(data);
-    router.push('/verify-otp')
+  const onSubmit = async (data: ForgotFormValues) => {
+    setIsSubmitting(true);
+    try {
+      await fetchUrl("/auth/forgot-password", { method: "POST", body: { email: data.email } });
+      // The OTP step needs the email again but doesn't collect it itself —
+      // carry it forward in sessionStorage rather than a query param.
+      window.sessionStorage.setItem("reset-email", data.email);
+      toast.success("If an account exists for this email, an OTP has been sent.");
+      router.push('/verify-otp');
+    } catch (err: any) {
+      toast.error(err.message || "Failed to send OTP.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -53,12 +69,7 @@ const ForgotPassword = () => {
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
           <InputField title="Email Address" name="email" placeholder="name@domain.com" register={register} error={errors.email} />
 
-          <button
-            type="submit"
-            className="mt-4 w-full rounded-2xl bg-[#064e3b] py-5 text-[17px] font-bold text-white transition-all hover:bg-[#042f24] hover:shadow-lg active:scale-[0.99]"
-          >
-            Get OTP
-          </button>
+          <SubmitButton isSubmitting={isSubmitting} title="Get OTP" className="mt-4 py-5 text-[17px]" />
           <Link href="/sign-in" className="text-center text-[#4B6548] block font-semibold hover:text-[#042f24]">Back to Sign In</Link>
         </form>
       </motion.div>

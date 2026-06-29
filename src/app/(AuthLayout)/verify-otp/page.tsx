@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -11,6 +12,8 @@ import {
 } from "@/components/ui/input-otp";
 import { toast } from "sonner";
 import SubmitButton from "@/components/buttons/SubmitButton";
+import { fetchUrl } from "@/lib/fetchUrl";
+
 // Schema
 const contactUsFormSchema = z.object({
   verifyOtp: z
@@ -24,13 +27,25 @@ type ContactUsFormValues = z.infer<typeof contactUsFormSchema>;
 
 const VerifyOtp = () => {
   const router = useRouter();
+  const [email, setEmail] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isResending, setIsResending] = useState(false);
+
+  useEffect(() => {
+    const storedEmail = window.sessionStorage.getItem("reset-email");
+    if (!storedEmail) {
+      // Landed here without going through Forgot Password first
+      router.replace("/forgot-password");
+      return;
+    }
+    setEmail(storedEmail);
+  }, [router]);
 
   const {
     handleSubmit,
-    control,
     setValue,
     watch,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<ContactUsFormValues>({
     resolver: zodResolver(contactUsFormSchema),
     defaultValues: {
@@ -41,16 +56,35 @@ const VerifyOtp = () => {
 
   const otpValue = watch("verifyOtp");
 
-  const onSubmit = (data: ContactUsFormValues) => {
-    const payload = {
-      otp: data.verifyOtp,
-    };
+  const onSubmit = async (data: ContactUsFormValues) => {
+    if (!email) return;
+    setIsSubmitting(true);
+    try {
+      const result = await fetchUrl("/auth/verify-otp", {
+        method: "POST",
+        body: { email, otp: data.verifyOtp },
+      });
+      window.sessionStorage.setItem("reset-ticket", result.data.resetTicket);
+      toast.success("OTP verified successfully");
+      router.push("/reset-password");
+    } catch (err: any) {
+      toast.error(err.message || "Invalid or expired OTP.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
-    console.log("Submitted Data:", payload);
-
-    toast.success("OTP verified successfully");
-
-    router.push("/reset-password");
+  const handleResend = async () => {
+    if (!email) return;
+    setIsResending(true);
+    try {
+      await fetchUrl("/auth/forgot-password", { method: "POST", body: { email } });
+      toast.success("A new OTP has been sent.");
+    } catch (err: any) {
+      toast.error(err.message || "Failed to resend OTP.");
+    } finally {
+      setIsResending(false);
+    }
   };
 
   return (
@@ -120,11 +154,19 @@ const VerifyOtp = () => {
 
           {/* Submit Button */}
           <div className="flex items-center justify-center pt-4">
-            <div className="w-full max-w-96">
+            <div className="w-full max-w-96 space-y-3">
               <SubmitButton
                 isSubmitting={isSubmitting}
                 title="Continue"
               />
+              <button
+                type="button"
+                onClick={handleResend}
+                disabled={isResending}
+                className="w-full text-center text-sm font-semibold text-[#064e3b] hover:underline disabled:opacity-60"
+              >
+                {isResending ? "Resending..." : "Didn't get a code? Resend OTP"}
+              </button>
             </div>
           </div>
         </form>

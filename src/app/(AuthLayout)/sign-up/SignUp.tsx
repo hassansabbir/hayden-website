@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { motion } from "framer-motion";
 import InputField from "@/components/form/InputField";
@@ -10,34 +11,57 @@ import BottomDot from "../BottomDot";
 import { useRouter } from "next/navigation";
 import useLoginUser from "@/hooks/useUser";
 import Link from "next/link";
+import { toast } from "sonner";
+import SubmitButton from "@/components/buttons/SubmitButton";
 
-const signinSchema = z.object({
-  name: z.string(),
+const signupSchema = z.object({
+  name: z.string().min(2, "Name must be at least 2 characters").max(80),
   email: z.string().email(),
-  phone: z.string(),
-  password: z.string().min(6),
+  phone: z.string().min(5, "Enter a valid phone number").max(20),
+  password: z.string().min(6, "Password must be at least 6 characters").max(72),
+  confirmPassword: z.string().min(6),
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "Passwords do not match",
+  path: ["confirmPassword"],
 });
 
-type SigninFormValues = z.infer<typeof signinSchema>
+type SignupFormValues = z.infer<typeof signupSchema>
 
 const SignUp = () => {
   const router = useRouter();
-  const { login } = useLoginUser();
+  const { signup } = useLoginUser();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<SigninFormValues>({
-    resolver: zodResolver(signinSchema),
+  } = useForm<SignupFormValues>({
+    resolver: zodResolver(signupSchema),
     defaultValues: {
+      name: '',
       email: '',
+      phone: '',
       password: '',
+      confirmPassword: '',
     }
   })
 
-  const onSubmit = (data: any) => {
-    console.log(data);
-    login();
+  const onSubmit = async (data: SignupFormValues) => {
+    setIsSubmitting(true);
+    const result = await signup({
+      fullName: data.name,
+      email: data.email,
+      phone: data.phone,
+      password: data.password,
+    });
+    setIsSubmitting(false);
+
+    if (!result.success) {
+      toast.error(result.message || "Failed to create account.");
+      return;
+    }
+
+    toast.success("Account created! Welcome to Tea It Up.");
     router.replace('/');
   };
 
@@ -59,20 +83,15 @@ const SignUp = () => {
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <InputField title="Full Name  " name="name" placeholder="name@domain.com" register={register} error={errors.name} />
+          <InputField title="Full Name" name="name" placeholder="John Doe" register={register} error={errors.name} />
           <InputField title="Email Address" name="email" placeholder="name@domain.com" register={register} error={errors.email} />
-          <InputField title="Phone Number" name="phone" placeholder="••••••••" register={register} error={errors.phone} />
+          <InputField title="Phone Number" name="phone" placeholder="+1 555 123 4567" register={register} error={errors.phone} />
           <div className="grid grid-cols-2 gap-4">
             <InputFieldPassword title="Password" name="password" placeholder="••••••••" register={register} error={errors.password} />
-            <InputFieldPassword title="Password" name="password" placeholder="••••••••" register={register} error={errors.password} />
+            <InputFieldPassword title="Confirm Password" name="confirmPassword" placeholder="••••••••" register={register} error={errors.confirmPassword} />
           </div>
 
-          <button
-            type="submit"
-            className="mt-4 w-full rounded-2xl bg-[#064e3b] py-5 text-[17px] font-bold text-white transition-all hover:bg-[#042f24] hover:shadow-lg active:scale-[0.99]"
-          >
-            Sign In
-          </button>
+          <SubmitButton isSubmitting={isSubmitting} title="Sign Up" className="mt-4 py-5 text-[17px]" />
           <p className="text-center">
             Already have an account? <Link href="/sign-in" className="text-[#064e3b] font-bold">Sign In</Link>
           </p>

@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { motion } from "framer-motion";
 import InputField from "@/components/form/InputField";
@@ -10,6 +11,8 @@ import BottomDot from "../BottomDot";
 import { useRouter } from "next/navigation";
 import useLoginUser from "@/hooks/useUser";
 import Link from "next/link";
+import { toast } from "sonner";
+import SubmitButton from "@/components/buttons/SubmitButton";
 
 const signinSchema = z.object({
   email: z.string().email(),
@@ -21,6 +24,7 @@ type SigninFormValues = z.infer<typeof signinSchema>
 const SignIn = () => {
   const router = useRouter();
   const { login } = useLoginUser();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const {
     register,
     handleSubmit,
@@ -33,9 +37,17 @@ const SignIn = () => {
     }
   })
 
-  const onSubmit = (data: any) => {
-    console.log(data);
-    login();
+  const onSubmit = async (data: SigninFormValues) => {
+    setIsSubmitting(true);
+    const result = await login(data.email, data.password);
+    setIsSubmitting(false);
+
+    if (!result.success) {
+      toast.error(result.message || "Unable to sign in.");
+      return;
+    }
+
+    toast.success("Welcome back!");
     router.replace('/');
   };
 
@@ -60,12 +72,7 @@ const SignIn = () => {
           <InputField title="Email Address" name="email" placeholder="name@domain.com" register={register} error={errors.email} />
           <InputFieldPassword title="Password" name="password" placeholder="••••••••" register={register} error={errors.password} isForgotPassword={true} />
 
-          <button
-            type="submit"
-            className="mt-4 w-full rounded-2xl bg-[#064e3b] py-5 text-[17px] font-bold text-white transition-all hover:bg-[#042f24] hover:shadow-lg active:scale-[0.99]"
-          >
-            Sign In
-          </button>
+          <SubmitButton isSubmitting={isSubmitting} title="Sign In" className="mt-4 py-5 text-[17px]" />
           <p className="text-center">
             Don't have an account? <Link href="/sign-up" className="text-[#064e3b] font-bold">Sign Up</Link>
           </p>

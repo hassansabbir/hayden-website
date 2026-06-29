@@ -4,6 +4,7 @@ type CourseCardProps = {
   location: string;
   price: string;
   image: string;
+  slug?: string;
 };
 
 import { motion, Variants } from "framer-motion";
@@ -16,6 +17,7 @@ const CourseCard = ({
   location,
   price,
   image,
+  slug,
 }: CourseCardProps) => {
   const itemVariants: Variants = {
     hidden: { opacity: 0, y: 30 },
@@ -63,7 +65,7 @@ const CourseCard = ({
           <span className="text-[#113f1b] font-bold text-lg">{price}</span>
 
           <Link
-            href={`/explore-clubs/1`}
+            href={`/explore-clubs/${slug || ""}`}
             className="flex items-center gap-1 text-[#113f1b] font-bold text-sm hover:underline group/btn"
           >
             Book

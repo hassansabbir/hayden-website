@@ -14,7 +14,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { MainLogo } from "@/asset/asset";
 import useLoginUser from "@/hooks/useUser";
 
@@ -25,10 +25,18 @@ const navLinks = [
   { name: "About Us", href: "/about" },
 ];
 
+const getInitials = (name?: string) =>
+  (name || "")
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase())
+    .join("") || "U";
+
 const Header = () => {
   const router = useRouter();
   const pathname = usePathname();
-  const { isLogin, logout } = useLoginUser();
+  const { isLogin, user, logout } = useLoginUser();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
@@ -126,14 +134,18 @@ const Header = () => {
                 <DropdownMenuTrigger asChild>
                   <button className="flex items-center gap-3 outline-none cursor-pointer">
                     <Avatar className="w-10 h-10 border-2 border-[#0A3A20] rounded-lg shadow-sm overflow-hidden">
-                      <Image
-                        src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                        alt="User Avatar"
-                        fill
-                        className="object-cover"
-                      />
-                      <AvatarFallback className="rounded-lg">US</AvatarFallback>
+                      <AvatarFallback className="rounded-lg bg-[#0A3A20] text-white font-bold">
+                        {getInitials(user?.name)}
+                      </AvatarFallback>
                     </Avatar>
+                    <span
+                      className={cn(
+                        "hidden lg:inline text-[15px] font-semibold max-w-[140px] truncate",
+                        useWhiteText ? "text-white" : "text-gray-800",
+                      )}
+                    >
+                      {user?.name}
+                    </span>
                     <ChevronDown
                       className={cn(
                         "w-4 h-4 stroke-[3px]",
@@ -143,7 +155,7 @@ const Header = () => {
                   </button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-48">
-                  <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                  <DropdownMenuLabel className="truncate">{user?.name || "My Account"}</DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={() => router.push("/profile")}>
                     Profile
@@ -211,19 +223,16 @@ const Header = () => {
             {isLogin ? (
               <div className="flex items-center gap-4 w-full">
                 <Avatar className="w-12 h-12 border-2 border-[#0A3A20] rounded-lg overflow-hidden">
-                  <AvatarImage
-                    src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=100"
-                    className="object-cover"
-                  />
-                  <AvatarFallback className="rounded-lg">US</AvatarFallback>
+                  <AvatarFallback className="rounded-lg bg-[#0A3A20] text-white font-bold">
+                    {getInitials(user?.name)}
+                  </AvatarFallback>
                 </Avatar>
                 <div className="flex-1">
-                  <Link href="/profile" className="font-semibold text-gray-900">
-                    Profile
-                  </Link>
-                  <Link href="/my-bookings" className="text-sm text-gray-500">
-                    My Bookings
-                  </Link>
+                  <p className="font-semibold text-gray-900 truncate">{user?.name}</p>
+                  <div className="flex gap-3 text-sm text-gray-500">
+                    <Link href="/profile">Profile</Link>
+                    <Link href="/my-bookings">My Bookings</Link>
+                  </div>
                 </div>
                 <button className="text-gray-800 p-2 bg-gray-50 rounded-full hover:bg-gray-100">
                   <Bell className="w-5 h-5" />
