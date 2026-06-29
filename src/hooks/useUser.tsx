@@ -9,6 +9,7 @@ export interface AuthUser {
   name: string;
   email: string;
   phone?: string;
+  avatar?: string | null;
 }
 
 interface RegisterPayload {
@@ -35,6 +36,7 @@ const toAuthUser = (dbUser: any): AuthUser => ({
   name: dbUser.fullName,
   email: dbUser.email,
   phone: dbUser.phone,
+  avatar: dbUser.avatar?.url ?? null,
 });
 
 // Writes only non-sensitive display fields (never the access token) to a

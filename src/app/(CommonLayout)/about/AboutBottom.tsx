@@ -1,9 +1,12 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { MapPin, Phone, ChevronDown } from "lucide-react";
+import { MapPin, Phone, ChevronDown, Loader2 } from "lucide-react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { fetchUrl } from "@/lib/fetchUrl";
+import useLoginUser from "@/hooks/useUser";
 import LocationPicker from "@/components/map/LocationPicker";
 
 type ContactFormValues = {
@@ -14,10 +17,27 @@ type ContactFormValues = {
 };
 
 const AboutBottom = () => {
-  const { register, handleSubmit } = useForm<ContactFormValues>();
+  const { register, handleSubmit, reset, setValue } = useForm<ContactFormValues>();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { user } = useLoginUser();
 
-  const onSubmit = (data: ContactFormValues) => {
-    console.log("Contact Form Submitted:", data);
+  useEffect(() => {
+    if (!user) return;
+    setValue("fullName", user.name);
+    setValue("email", user.email);
+  }, [user, setValue]);
+
+  const onSubmit = async (data: ContactFormValues) => {
+    setIsSubmitting(true);
+    try {
+      await fetchUrl("/contact", { method: "POST", body: data });
+      toast.success("Your message has been sent. We'll be in touch soon.");
+      reset();
+    } catch (err: any) {
+      toast.error(err.message || "Failed to send your message. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -186,9 +206,11 @@ const AboutBottom = () => {
               {/* Submit Button */}
               <button
                 type="submit"
-                className="w-full bg-[#10561c] hover:bg-[#0c4714] text-white font-bold py-[15px] rounded-xl transition-all shadow-[0_4px_14px_0_rgba(16,86,28,0.25)] hover:shadow-[0_6px_20px_rgba(16,86,28,0.3)] hover:-translate-y-px text-[15px] mt-2"
+                disabled={isSubmitting}
+                className="w-full bg-[#10561c] hover:bg-[#0c4714] text-white font-bold py-[15px] rounded-xl transition-all shadow-[0_4px_14px_0_rgba(16,86,28,0.25)] hover:shadow-[0_6px_20px_rgba(16,86,28,0.3)] hover:-translate-y-px text-[15px] mt-2 disabled:opacity-60 disabled:translate-y-0 flex items-center justify-center gap-2"
               >
-                Submit Inquiry
+                {isSubmitting && <Loader2 className="w-4 h-4 animate-spin" />}
+                {isSubmitting ? "Sending..." : "Submit Inquiry"}
               </button>
             </form>
           </div>

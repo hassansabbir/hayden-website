@@ -14,9 +14,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { MainLogo } from "@/asset/asset";
 import useLoginUser from "@/hooks/useUser";
+import { getMediaUrl } from "@/lib/fetchUrl";
 
 const navLinks = [
   { name: "Home", href: "/" },
@@ -134,6 +135,7 @@ const Header = () => {
                 <DropdownMenuTrigger asChild>
                   <button className="flex items-center gap-3 outline-none cursor-pointer">
                     <Avatar className="w-10 h-10 border-2 border-[#0A3A20] rounded-lg shadow-sm overflow-hidden">
+                      {user?.avatar && <AvatarImage src={getMediaUrl(user.avatar)} alt={user.name} className="object-cover" />}
                       <AvatarFallback className="rounded-lg bg-[#0A3A20] text-white font-bold">
                         {getInitials(user?.name)}
                       </AvatarFallback>
@@ -223,6 +225,7 @@ const Header = () => {
             {isLogin ? (
               <div className="flex items-center gap-4 w-full">
                 <Avatar className="w-12 h-12 border-2 border-[#0A3A20] rounded-lg overflow-hidden">
+                  {user?.avatar && <AvatarImage src={getMediaUrl(user.avatar)} alt={user.name} className="object-cover" />}
                   <AvatarFallback className="rounded-lg bg-[#0A3A20] text-white font-bold">
                     {getInitials(user?.name)}
                   </AvatarFallback>
