@@ -124,7 +124,7 @@ function BookingModal({ booking, onClose }: { booking: ApiBooking; onClose: () =
                             unoptimized
                             className="object-cover"
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-[#092e14]/80 via-[#092e14]/30 to-transparent" />
+                        <div className="absolute inset-0 bg-linear-to-t from-[#092e14]/80 via-[#092e14]/30 to-transparent" />
 
                         {/* Status badge */}
                         <span
