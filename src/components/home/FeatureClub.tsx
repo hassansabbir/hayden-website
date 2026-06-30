@@ -10,7 +10,7 @@ import { fetchUrl, getMediaUrl } from "@/lib/fetchUrl";
 import { cn } from "@/lib/utils";
 
 interface FeaturedCourse {
-  id: string;
+  _id: string;
   slug: string;
   name: string;
   location: string;
@@ -203,7 +203,7 @@ const FeatureClub = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {smallClubs.map((club) => (
                 <CourseCard
-                  key={club.id}
+                  key={club._id}
                   title={club.name}
                   rating={club.rating}
                   location={club.location}

@@ -58,14 +58,16 @@ const Header = () => {
     pathname.startsWith("/explore-clubs/") && pathname !== "/explore-clubs";
   const isTransparentPage = isHomePage || isExploreClubsDetails;
   const isTransparent = isTransparentPage && !scrolled;
-  const useWhiteText = isHomePage && isTransparent;
+  const useWhiteText = isTransparentPage && isTransparent;
 
   return (
     <header
       className={cn(
         "w-full z-50 transition-all duration-300",
         isTransparentPage ? "fixed top-0 left-0 right-0" : "sticky top-0",
-        isTransparent ? "bg-transparent" : "bg-[#ECF6F1] shadow-sm",
+        isTransparent
+          ? "bg-linear-to-b from-black/50 to-transparent"
+          : "bg-[#ECF6F1] shadow-sm",
       )}
     >
       <div className="max-w-[1280px] mx-auto py-1 px-4 flex items-center justify-between">

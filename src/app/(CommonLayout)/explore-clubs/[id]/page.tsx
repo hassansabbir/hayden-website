@@ -54,6 +54,7 @@ interface CourseType {
     image?: { url: string } | null;
   };
   gallery?: { url: string }[];
+  holeVideos?: { holeNumber: number; url: string }[];
 }
 
 interface TeeTimeType {
@@ -74,6 +75,18 @@ interface PageProps {
 
 const SELLING_POINT_ICONS = [Trophy, Compass, Sparkles, ShieldCheck];
 const FALLBACK_IMAGE = "https://images.unsplash.com/photo-1587174486073-ae5e5cff23aa?q=80&w=1200&auto=format&fit=crop";
+
+const getVideoEmbed = (url: string): { type: "iframe" | "video"; src: string } => {
+  const ytMatch = url.match(/(?:youtube\.com\/(?:watch\?v=|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+  if (ytMatch) return { type: "iframe", src: `https://www.youtube.com/embed/${ytMatch[1]}` };
+
+  const vimeoMatch = url.match(/vimeo\.com\/(\d+)/);
+  if (vimeoMatch) return { type: "iframe", src: `https://player.vimeo.com/video/${vimeoMatch[1]}` };
+
+  if (/\.(mp4|webm|ogg|mov)(\?.*)?$/i.test(url)) return { type: "video", src: url };
+
+  return { type: "iframe", src: url };
+};
 
 export default function ClubDetails({ params }: PageProps) {
   const router = useRouter();
@@ -517,6 +530,58 @@ export default function ClubDetails({ params }: PageProps) {
                 </div>
               </section>
             )}
+            {/* ── 9. COURSE HOLE VIDEOS ── */}
+            {course.holeVideos && course.holeVideos.length > 0 && (
+              <section className="space-y-6">
+                <div className="flex flex-col">
+                  <h2 className="text-2xl font-extrabold text-emerald-950">
+                    Course Hole Videos
+                  </h2>
+                  <div className="h-1 w-12 bg-emerald-600 rounded-full mt-2 mb-2" />
+                  <p className="text-slate-500 text-sm">
+                    Virtual walkthroughs of each hole — watch before you play.
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  {[...course.holeVideos]
+                    .sort((a, b) => a.holeNumber - b.holeNumber)
+                    .map((hole) => {
+                      const embed = getVideoEmbed(hole.url);
+                      return (
+                        <div
+                          key={hole.holeNumber}
+                          className="bg-white rounded-2xl border border-slate-100 shadow-xs overflow-hidden"
+                        >
+                          <div className="relative aspect-video bg-slate-100">
+                            {embed.type === "video" ? (
+                              <video
+                                src={embed.src}
+                                controls
+                                className="w-full h-full object-cover"
+                              />
+                            ) : (
+                              <iframe
+                                src={embed.src}
+                                title={`Hole ${hole.holeNumber} video`}
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                allowFullScreen
+                                className="w-full h-full border-0"
+                              />
+                            )}
+                          </div>
+                          <div className="px-4 py-3 flex items-center gap-2">
+                            <span className="inline-block text-xs font-bold text-teal-700 bg-teal-50 px-2.5 py-1 rounded-md border border-teal-100 uppercase tracking-wider">
+                              Hole #{hole.holeNumber}
+                            </span>
+                          </div>
+                        </div>
+                      );
+                    })}
+                </div>
+              </section>
+            )}
+
           </div>
 
           {/* ── 10. BOOKING SECTION (STICKY SIDEBAR) ── */}
