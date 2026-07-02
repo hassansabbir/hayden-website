@@ -164,6 +164,9 @@ const Header = () => {
                   <DropdownMenuItem onClick={() => router.push("/profile")}>
                     Profile
                   </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => router.push("/edit-profile")}>
+                    Edit Profile 
+                  </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => router.push("/my-bookings")}>
                     My Bookings
                   </DropdownMenuItem>
@@ -236,6 +239,7 @@ const Header = () => {
                   <p className="font-semibold text-gray-900 truncate">{user?.name}</p>
                   <div className="flex gap-3 text-sm text-gray-500">
                     <Link href="/profile">Profile</Link>
+                    <Link href="/edit-profile">Edit Profile</Link>
                     <Link href="/my-bookings">My Bookings</Link>
                   </div>
                 </div>

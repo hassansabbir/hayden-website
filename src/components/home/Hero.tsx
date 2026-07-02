@@ -12,21 +12,12 @@ const Hero = () => {
   const [date, setDate] = useState("");
 
   const handleSearch = () => {
-    router.push("/explore-clubs");
-  };
-
-  const handleCalendarClick = () => {
-    if (dateInputRef.current) {
-      if ("showPicker" in HTMLInputElement.prototype) {
-        try {
-          dateInputRef.current.showPicker();
-        } catch (error) {
-          dateInputRef.current.focus();
-        }
-      } else {
-        dateInputRef.current.focus();
-      }
-    }
+    const params = new URLSearchParams();
+    if (location) params.append("location", location);
+    if (date) params.append("date", date);
+    
+    const query = params.toString();
+    router.push(query ? `/explore-clubs?${query}` : "/explore-clubs");
   };
 
   return (
@@ -73,32 +64,36 @@ const Hero = () => {
           {/* Divider */}
           <div className="hidden md:block w-px h-12 bg-white/30 mx-2" />
 
-          {/* Date & Time Input */}
-          <div className="flex-1 flex flex-col px-4 md:pl-6 py-2 w-full justify-center relative">
-            <label className="text-[10px] md:text-xs font-bold tracking-widest text-white/90 uppercase mb-1">
-              Date & Time
-            </label>
+          {/* Date & Time Input and Calendar Icon Wrapper */}
+          <div className="flex-[1.2] flex items-center w-full relative cursor-pointer">
+            {/* The Invisible Input covering both Date text and Calendar button */}
             <input
-              ref={dateInputRef}
               type="date"
               value={date}
               onChange={(e) => setDate(e.target.value)}
-              className="bg-transparent border-none outline-none text-white placeholder-white/70 w-full text-base md:text-lg font-medium focus:ring-0 p-0 [&::-webkit-calendar-picker-indicator]:hidden"
+              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:cursor-pointer"
             />
+            
+            {/* Original Date & Time text block */}
+            <div className="flex-1 flex flex-col px-4 md:pl-6 py-2 w-full justify-center">
+              <label className="text-[10px] md:text-xs font-bold tracking-widest text-white/90 uppercase mb-1">
+                Date & Time
+              </label>
+              <div className="text-white text-base md:text-lg font-medium">
+                {date ? date : <span className="text-white/70">dd/mm/yyyy</span>}
+              </div>
+            </div>
+
+            {/* Original Calendar Button (now purely visual) */}
+            <div className="px-2 md:px-0">
+              <div className="p-3.5 md:p-4 bg-white/10 hover:bg-white/20 transition-all duration-300 rounded-xl border border-white/20 text-white flex items-center justify-center">
+                <Calendar className="w-5 h-5 md:w-6 md:h-6" strokeWidth={2} />
+              </div>
+            </div>
           </div>
 
-          {/* Action Buttons */}
-          <div className="flex items-center gap-2 w-full md:w-auto mt-3 md:mt-0 px-2 md:px-0">
-            <button
-              type="button"
-              onClick={handleCalendarClick}
-              className="flex-1 md:flex-none p-3.5 md:p-4 bg-white/10 hover:bg-white/20 transition-all duration-300 rounded-xl border border-white/20 text-white flex items-center justify-center group"
-            >
-              <Calendar
-                className="w-5 h-5 md:w-6 md:h-6 group-hover:scale-110 transition-transform"
-                strokeWidth={2}
-              />
-            </button>
+          {/* Action Buttons (Just Search) */}
+          <div className="flex items-center gap-2 w-full md:w-auto mt-3 md:mt-0 px-2 md:px-0 z-30 relative">
             <button
               type="button"
               onClick={handleSearch}

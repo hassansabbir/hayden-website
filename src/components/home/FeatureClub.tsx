@@ -125,7 +125,7 @@ const FeatureClub = () => {
                 className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
                 style={{ backgroundImage: `url('${getMediaUrl(first.heroImage?.url) || FALLBACK_IMAGE}')` }}
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#0a1a0d]/90 via-[#0a1a0d]/40 to-transparent" />
+              <div className="absolute inset-0 bg-linear-to-t from-[#0a1a0d]/90 via-[#0a1a0d]/40 to-transparent" />
 
               <div className="absolute inset-x-0 bottom-0 p-6 md:p-8 flex flex-col justify-end">
                 <div className="flex items-center gap-1 text-white font-medium text-sm mb-4">
@@ -167,7 +167,7 @@ const FeatureClub = () => {
                   className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
                   style={{ backgroundImage: `url('${getMediaUrl(second.heroImage?.url) || FALLBACK_IMAGE}')` }}
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#0a1a0d]/90 via-[#0a1a0d]/30 to-transparent" />
+                <div className="absolute inset-0 bg-linear-to-t from-[#0a1a0d]/90 via-[#0a1a0d]/30 to-transparent" />
 
                 <div className="absolute inset-x-0 bottom-0 p-6 md:p-8 flex flex-col justify-end">
                   <div className="flex items-center gap-1 text-white font-medium text-sm mb-3">

@@ -2,8 +2,9 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import { Calendar, Trophy, BarChart2, ArrowUpRight } from "lucide-react";
+import { Calendar, Trophy, ArrowUpRight } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 
 const Hero2 = () => {
   const containerVariants = {
@@ -103,7 +104,7 @@ const Hero2 = () => {
 
       {/* Bottom Cards Section */}
       <div className="relative z-20 w-full max-w-7xl mx-auto px-6 -mb-20 md:-mb-24 lg:-mb-28">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Card 1 */}
           <motion.div
             custom={0}
@@ -111,7 +112,7 @@ const Hero2 = () => {
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
-            className="col-span-2 bg-white p-8 rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.1)] flex flex-col relative group cursor-pointer hover:translate-y-[-4px] transition-transform duration-300"
+            className="bg-white p-8 rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.1)] flex flex-col relative group cursor-pointer hover:translate-y-[-4px] transition-transform duration-300"
           >
             <div className="absolute top-8 right-8 text-[#CBD5E1] group-hover:text-[#0B3D2E] transition-colors">
               <ArrowUpRight size={24} />
@@ -129,6 +130,7 @@ const Hero2 = () => {
           </motion.div>
 
           {/* Card 2 */}
+         <Link href="/my-bookings">
           <motion.div
             custom={1}
             variants={cardVariants}
@@ -142,33 +144,13 @@ const Hero2 = () => {
             </div>
             <h3 className="text-2xl font-bold text-[#0B3D2E] mb-3 leading-tight">
               View Upcoming <br />
-              Tournaments
+              Bookings
             </h3>
             <p className="text-[#64748B] text-sm md:text-base leading-relaxed">
               3 events matching your skill level this month.
             </p>
-          </motion.div>
+          </motion.div></Link>
 
-          {/* Card 3 */}
-          <motion.div
-            custom={2}
-            variants={cardVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            className="bg-white p-8 rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.1)] flex flex-col relative group cursor-pointer hover:translate-y-[-4px] transition-transform duration-300"
-          >
-            <div className="w-12 h-12 bg-[#E1F3F2] rounded-lg flex items-center justify-center mb-10">
-              <BarChart2 className="text-[#0D9488]" size={24} />
-            </div>
-            <h3 className="text-2xl font-bold text-[#0B3D2E] mb-3 leading-tight">
-              Performance <br />
-              Analytics
-            </h3>
-            <p className="text-[#64748B] text-sm md:text-base leading-relaxed">
-              Your handicap improved by 1.2 pts last week.
-            </p>
-          </motion.div>
         </div>
       </div>
     </section>

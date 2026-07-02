@@ -12,6 +12,7 @@ import {
   Loader2,
 } from "lucide-react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { fetchUrl, getMediaUrl } from "@/lib/fetchUrl";
 import { cn } from "@/lib/utils";
 
@@ -39,7 +40,8 @@ const ExploreClubs = () => {
   const [loadError, setLoadError] = useState<string | null>(null);
 
   // Filter States
-  const [searchTerm, setSearchTerm] = useState("");
+  const searchParams = useSearchParams();
+  const [searchTerm, setSearchTerm] = useState(searchParams.get("location") || searchParams.get("search") || "");
   const [priceMin, setPriceMin] = useState("");
   const [priceMax, setPriceMax] = useState("");
   const [session, setSession] = useState<string | null>(null);

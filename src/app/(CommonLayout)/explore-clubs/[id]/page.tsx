@@ -190,6 +190,17 @@ export default function ClubDetails({ params }: PageProps) {
     }
   };
 
+  const formatShortDate = (dateStr: string) => {
+    if (!dateStr) return "dd/mm/yyyy";
+    try {
+      // Create date ignoring timezone offset by appending T00:00:00 to avoid shifting days
+      const d = new Date(dateStr.includes("T") ? dateStr : `${dateStr}T12:00:00`);
+      return d.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
+    } catch {
+      return dateStr;
+    }
+  };
+
   const formatTimeStr = (time24: string) => {
     if (!time24) return "";
     const [hoursStr, minutesStr] = time24.split(":");
@@ -604,14 +615,21 @@ export default function ClubDetails({ params }: PageProps) {
                 <label className="text-slate-400 text-xs font-bold uppercase tracking-wider block mb-2.5">
                   1. Choose Date
                 </label>
-                <div className="relative">
+                <div className="relative flex items-center w-full p-3.5 rounded-xl border border-slate-200 bg-white focus-within:border-emerald-600 focus-within:ring-1 focus-within:ring-emerald-600 cursor-pointer overflow-hidden hover:border-emerald-300 transition-colors">
+                  {/* Invisible native input covering everything */}
                   <input
                     type="date"
                     value={selectedDate}
                     onChange={(e) => setSelectedDate(e.target.value)}
-                    className="w-full p-3.5 pl-11 rounded-xl border border-slate-200 text-sm font-semibold text-slate-800 focus:outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 accent-emerald-700 bg-white"
+                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                   />
-                  <Calendar className="w-5 h-5 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                  
+                  <Calendar className="w-5 h-5 text-slate-400 mr-2.5 shrink-0" />
+                  
+                  {/* Visual Date text */}
+                  <div className="flex-1 text-sm font-semibold text-slate-800 truncate">
+                    {formatShortDate(selectedDate)}
+                  </div>
                 </div>
                 <div className="text-[11px] text-slate-400 font-semibold mt-2.5 text-center">
                   Selected date: <span className="text-emerald-900 font-bold">{formatSelectedDate(selectedDate)}</span>

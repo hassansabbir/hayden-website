@@ -1,7 +1,9 @@
 import { getClientToken, setClientToken } from "./apiToken";
 import { cache } from "react";
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/v1";
+// Absolute backend URL — used for server-side fetches (direct server-to-server)
+// and for constructing media/upload URLs that must always point at the backend.
+const ABSOLUTE_API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/v1";
 
 // Tells the backend which frontend is calling, so it can hand out a
 // separate refresh-token cookie per app. Without this, the website and
@@ -12,8 +14,8 @@ const CLIENT_APP_HEADER = "X-Client-App";
 const CLIENT_APP = "website";
 
 // Media URLs come back as paths relative to the API server's origin
-// (e.g. "/uploads/xyz.jpg"), not the "/api/v1"-prefixed BASE_URL.
-export const API_ORIGIN = BASE_URL.replace(/\/api\/v1\/?$/, "");
+// (e.g. "/uploads/xyz.jpg"), not the "/api/v1"-prefixed URL.
+export const API_ORIGIN = ABSOLUTE_API_URL.replace(/\/api\/v1\/?$/, "");
 
 export const getMediaUrl = (path?: string | null): string => {
   if (!path) return "";
@@ -40,7 +42,7 @@ const clearSessionAndNotify = () => {
 // React cache ensures this runs at most once per SSR request
 const getServerAccessToken = cache(async (cookieHeader: string): Promise<string | null> => {
   try {
-    const response = await fetch(`${BASE_URL}/auth/refresh-token`, {
+    const response = await fetch(`${ABSOLUTE_API_URL}/auth/refresh-token`, {
       method: "POST",
       headers: {
         Cookie: cookieHeader,
@@ -57,6 +59,10 @@ const getServerAccessToken = cache(async (cookieHeader: string): Promise<string 
 
 export async function fetchUrl(endpoint: string, options: FetchOptions = {}): Promise<any> {
   const isServer = typeof window === "undefined";
+  // Server-side: call the backend directly (server-to-server, no proxy needed).
+  // Client-side: use /api/v1 so the request goes through the Next.js rewrite
+  // proxy — cookies are then same-origin and always sent correctly on reload.
+  const BASE_URL = isServer ? ABSOLUTE_API_URL : "/api/v1";
   const url = `${BASE_URL}${endpoint}`;
 
   const headers = new Headers(options.headers);

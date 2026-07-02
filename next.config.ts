@@ -1,37 +1,52 @@
 import type { NextConfig } from "next";
 
+const apiBase =
+  process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5000/api/v1";
+const parsedApi = new URL(apiBase);
+const apiProto = parsedApi.protocol.replace(":", "") as "http" | "https";
+
+// Backend origin without the /api/v1 suffix, used for rewrites below.
+const backendOrigin = apiBase.replace(/\/api\/v1\/?$/, "");
+
 const nextConfig: NextConfig = {
   reactCompiler: true,
 
-  allowedDevOrigins: ["10.10.7.47"],
+  allowedDevOrigins: ["sabbir3001.naimulhassan.me", "sabbir3000.naimulhassan.me"],
+
+  // Proxy all /api/v1 requests through Next.js so the browser always talks to
+  // the same origin it loaded the page from. This means refresh-token cookies
+  // are attributed to the frontend origin instead of the backend origin,
+  // eliminating cross-port SameSite/CORS issues that caused logout on reload.
+  async rewrites() {
+    return [
+      {
+        source: "/api/v1/:path*",
+        destination: `${backendOrigin}/api/v1/:path*`,
+      },
+    ];
+  },
 
   images: {
-    // Bypass Next.js image optimization proxy entirely.
-    // Next.js refuses to fetch-and-optimize images that resolve to private IPs
-    // (localhost / 127.0.0.1), which breaks all backend-uploaded images in dev.
-    // With unoptimized: true, <Image> renders a plain <img> pointing straight
-    // at the source URL — no server-side proxy, no private-IP block.
+    // Bypass Next.js image-optimization proxy — avoids private-IP blocks in
+    // dev and keeps images working when served straight from the backend URL.
     unoptimized: true,
     remotePatterns: [
+      // Unsplash (used for placeholder/stock images in dev)
+      { protocol: "https", hostname: "images.unsplash.com" },
+      // Cloudinary — required when MEDIA_PROVIDER=CLOUDINARY in production
+      { protocol: "https", hostname: "res.cloudinary.com" },
+      // Production backend (resolved from NEXT_PUBLIC_API_URL at build time)
       {
-        protocol: "https",
-        hostname: "images.unsplash.com",
-      },
-      {
-        protocol: "http",
-        hostname: "localhost",
-        port: "5000",
+        protocol: apiProto,
+        hostname: parsedApi.hostname,
+        ...(parsedApi.port ? { port: parsedApi.port } : {}),
         pathname: "/**",
       },
-      {
-        protocol: "http",
-        hostname: "127.0.0.1",
-        port: "5000",
-        pathname: "/**",
-      },
+      // Local dev fallbacks
+      { protocol: "http", hostname: "localhost", port: "5000", pathname: "/**" },
+      { protocol: "http", hostname: "127.0.0.1", port: "5000", pathname: "/**" },
     ],
   },
 };
 
 export default nextConfig;
-
