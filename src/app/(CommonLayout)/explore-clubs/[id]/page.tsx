@@ -14,6 +14,8 @@ import {
   Compass,
   ArrowRight,
   Loader2,
+  Video,
+  X,
 } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -97,6 +99,8 @@ export default function ClubDetails({ params }: PageProps) {
   const [teeTimes, setTeeTimes] = useState<TeeTimeType[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
+  const [isDroneModalOpen, setIsDroneModalOpen] = useState(false);
+  const [activeHoleIndex, setActiveHoleIndex] = useState(0);
 
   const getTodayDateStr = () => {
     const today = new Date();
@@ -153,6 +157,21 @@ export default function ClubDetails({ params }: PageProps) {
       setSelectedTimeId(null);
     }
   }, [teeTimes]);
+
+  // Lock body scroll and handle Escape key to close the drone video modal
+  useEffect(() => {
+    if (isDroneModalOpen) {
+      document.body.style.overflow = "hidden";
+      const handleKeyDown = (e: KeyboardEvent) => {
+        if (e.key === "Escape") setIsDroneModalOpen(false);
+      };
+      window.addEventListener("keydown", handleKeyDown);
+      return () => {
+        document.body.style.overflow = "unset";
+        window.removeEventListener("keydown", handleKeyDown);
+      };
+    }
+  }, [isDroneModalOpen]);
 
   // Scroll to booking helper
   const handleScrollToBooking = () => {
@@ -238,6 +257,10 @@ export default function ClubDetails({ params }: PageProps) {
     return item?.url || "";
   }).filter(Boolean);
 
+  const sortedHoles = course.holeVideos ? [...course.holeVideos].sort((a, b) => a.holeNumber - b.holeNumber) : [];
+  const activeHole = sortedHoles[activeHoleIndex];
+  const embed = activeHole ? getVideoEmbed(activeHole.url) : null;
+
   return (
     <div className="bg-[#f8faf9] min-h-screen text-slate-800 font-sans pb-24 lg:pb-12">
       {/* ── 1. HERO SECTION ── */}
@@ -283,15 +306,27 @@ export default function ClubDetails({ params }: PageProps) {
               </p>
             </div>
 
-            {/* Quick CTA - Book Tee Time */}
-            <div className="flex justify-start lg:justify-end">
+            {/* Quick CTA - Book Now & Drone Video round icon button */}
+            <div className="flex items-center justify-start lg:justify-end gap-3.5 w-full lg:w-auto">
               <button
                 onClick={handleScrollToBooking}
-                className="w-full lg:w-auto flex items-center justify-center gap-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-8 py-4 rounded-xl text-base shadow-lg shadow-emerald-950/30 active:scale-95 transition-all cursor-pointer border-none outline-none"
+                className="flex-1 sm:flex-initial flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-8 py-4 rounded-xl text-base shadow-lg shadow-emerald-950/30 active:scale-95 transition-all cursor-pointer border-none outline-none"
               >
-                Book Tee Time
+                Book Now
                 <ArrowRight className="w-5 h-5" />
               </button>
+              {course.holeVideos && course.holeVideos.length > 0 && (
+                <button
+                  onClick={() => {
+                    setActiveHoleIndex(0);
+                    setIsDroneModalOpen(true);
+                  }}
+                  title="View Drone Footage"
+                  className="w-14 h-14 flex items-center justify-center bg-emerald-950/60 hover:bg-emerald-900/80 text-white rounded-full border border-emerald-500/20 backdrop-blur-md transition-all active:scale-95 cursor-pointer shrink-0"
+                >
+                  <Video className="w-5 h-5 text-emerald-400" />
+                </button>
+              )}
             </div>
           </div>
         </div>
@@ -542,7 +577,7 @@ export default function ClubDetails({ params }: PageProps) {
               </section>
             )}
             {/* ── 9. COURSE HOLE VIDEOS ── */}
-            {course.holeVideos && course.holeVideos.length > 0 && (
+            {/* {course.holeVideos && course.holeVideos.length > 0 && (
               <section className="space-y-6">
                 <div className="flex flex-col">
                   <h2 className="text-2xl font-extrabold text-emerald-950">
@@ -591,7 +626,7 @@ export default function ClubDetails({ params }: PageProps) {
                     })}
                 </div>
               </section>
-            )}
+            )} */}
 
           </div>
 
@@ -764,6 +799,104 @@ export default function ClubDetails({ params }: PageProps) {
           >
             Book Now
           </button>
+        </div>
+      )}
+      {/* ── DRONE FOOTAGE MODAL ── */}
+      {isDroneModalOpen && course.holeVideos && course.holeVideos.length > 0 && (
+        <div className="fixed inset-0 z-100 flex items-center justify-center p-4 bg-emerald-950/80 backdrop-blur-md transition-all duration-300">
+          {/* Click outside to close container */}
+          <div
+            className="absolute inset-0 cursor-default"
+            onClick={() => setIsDroneModalOpen(false)}
+          />
+
+          {/* Modal Card with premium dark-green theme */}
+          <div className="relative w-full max-w-4xl bg-[#031d0b] border border-emerald-800/35 rounded-3xl overflow-hidden shadow-2xl z-10 flex flex-col max-h-[90vh]">
+            
+            {/* Header */}
+            <div className="flex items-center justify-between px-6 py-4.5 border-b border-emerald-900/40 bg-[#021808] shrink-0">
+              <div className="flex items-center gap-2.5">
+                <div className="p-2 bg-emerald-950/80 text-emerald-400 rounded-xl border border-emerald-600/30">
+                  <Video className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-base md:text-lg font-extrabold text-white leading-none">
+                    Drone Walkthrough Footage
+                  </h3>
+                  <p className="text-xs text-emerald-400/70 mt-1">
+                    Select a hole below to see virtual aerial views
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setIsDroneModalOpen(false)}
+                className="p-2 bg-[#062c12] hover:bg-[#093d19] text-emerald-400 hover:text-white rounded-full transition-colors cursor-pointer border-none outline-none"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Circular buttons list at the top */}
+            <div 
+              className="px-6 py-4 bg-[#021406] border-b border-emerald-900/40 shrink-0 overflow-x-auto scroll-smooth"
+              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+            >
+              <div className="flex items-center gap-2 min-w-max pb-1">
+                {sortedHoles.map((hole, index) => {
+                  const isActive = activeHoleIndex === index;
+                  return (
+                    <button
+                      key={hole.holeNumber}
+                      onClick={() => setActiveHoleIndex(index)}
+                      className={cn(
+                        "flex items-center justify-center px-4.5 h-12 rounded-full text-xs md:text-sm font-extrabold transition-all duration-200 cursor-pointer shrink-0 border",
+                        isActive
+                          ? "bg-emerald-600 text-white border-emerald-500 shadow-lg shadow-emerald-600/30 scale-105"
+                          : "bg-[#062c12] hover:bg-[#093d19] text-emerald-300 border-emerald-800/40 hover:border-emerald-600/50"
+                      )}
+                    >
+                      Hole {hole.holeNumber}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Enlarged Video screen at the bottom */}
+            <div className="flex-1 bg-black relative aspect-video md:max-h-[50vh] overflow-hidden">
+              {activeHole && embed ? (
+                embed.type === "video" ? (
+                  <video
+                    key={activeHoleIndex} // Force complete player remount on hole change to load new video source correctly
+                    src={embed.src}
+                    controls
+                    autoPlay
+                    className="w-full h-full object-contain"
+                  />
+                ) : (
+                  <iframe
+                    key={activeHoleIndex} // Force complete player remount on hole change to load new video source correctly
+                    src={`${embed.src}?autoplay=1`}
+                    title={`Hole ${activeHole.holeNumber} video`}
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowFullScreen
+                    className="w-full h-full border-0 absolute inset-0"
+                  />
+                )
+              ) : (
+                <div className="absolute inset-0 flex items-center justify-center text-slate-500 text-sm">
+                  Select a hole video above
+                </div>
+              )}
+            </div>
+            
+            {/* Small Footer / Info Bar */}
+            {activeHole && (
+              <div className="px-6 py-3 bg-[#021808] border-t border-emerald-900/40 text-center text-xs font-bold uppercase tracking-wider text-emerald-400 shrink-0">
+                Playing footage for Hole #{activeHole.holeNumber}
+              </div>
+            )}
+          </div>
         </div>
       )}
     </div>

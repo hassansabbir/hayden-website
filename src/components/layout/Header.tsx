@@ -130,7 +130,7 @@ const Header = () => {
                     : "text-gray-800 hover:text-[#1b8a5a]",
                 )}
               >
-                <Bell className="w-[22px] h-[22px]" />
+                {/* <Bell className="w-[22px] h-[22px]" /> */}
               </button>
 
               <DropdownMenu>
@@ -244,7 +244,7 @@ const Header = () => {
                   </div>
                 </div>
                 <button className="text-gray-800 p-2 bg-gray-50 rounded-full hover:bg-gray-100">
-                  <Bell className="w-5 h-5" />
+                  {/* <Bell className="w-5 h-5" /> */}
                 </button>
               </div>
             ) : (
