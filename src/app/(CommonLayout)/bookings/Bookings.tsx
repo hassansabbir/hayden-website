@@ -39,7 +39,7 @@ const Bookings = () => {
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, delay: 0.3, ease: [0.21, 0.47, 0.32, 0.98] }}
-        className="relative z-10 w-full max-w-[540px] bg-white/75 backdrop-blur-xl rounded-[32px] p-8 sm:p-12 shadow-[0_8px_40px_rgba(0,0,0,0.12)] border border-white/40"
+        className="relative z-10 w-full max-w-135 bg-white/75 backdrop-blur-xl rounded-[32px] p-8 sm:p-12 shadow-[0_8px_40px_rgba(0,0,0,0.12)] border border-white/40"
       >
         <div className="text-center mb-10">
           <motion.div
@@ -62,7 +62,7 @@ const Bookings = () => {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.7 }}
-            className="text-[#4b5a4d] text-[15.5px] leading-relaxed max-w-[420px] mx-auto"
+            className="text-[#4b5a4d] text-[15.5px] leading-relaxed max-w-105 mx-auto"
           >
             Enter your details below to manage your reservation, view tee times, or update your membership status.
           </motion.p>
@@ -115,7 +115,7 @@ const Bookings = () => {
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             type="submit"
-            className="w-full bg-[#10561c] text-white font-bold py-[18px] rounded-[14px] shadow-[0_4px_14px_0_rgba(16,86,28,0.25)] text-[16px] flex items-center justify-center gap-2 mt-8"
+            className="w-full bg-[#10561c] text-white font-bold py-4.5 rounded-[14px] shadow-[0_4px_14px_0_rgba(16,86,28,0.25)] text-[16px] flex items-center justify-center gap-2 mt-8"
           >
             <span>View Booking Status</span>
             <ArrowRight className="w-5 h-5" strokeWidth={2.5} />

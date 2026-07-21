@@ -218,7 +218,7 @@ const Reserve = () => {
 
   return (
     <div className="min-h-screen bg-[#fafbfa] font-sans text-slate-900 flex justify-center py-12 md:py-20 px-4 sm:px-6 lg:px-8">
-      <div className="w-full max-w-[1150px]">
+      <div className="w-full max-w-287.5">
         {/* Breadcrumb */}
         <div className="flex items-center text-[11px] font-bold tracking-widest uppercase mb-10 text-gray-500">
           <span>RESERVATIONS</span>
@@ -226,13 +226,13 @@ const Reserve = () => {
           <span className="text-[#0a4a1b]">SECURE BOOKING</span>
         </div>
 
-        <div className="flex flex-col lg:flex-row gap-12 lg:gap-[80px]">
+        <div className="flex flex-col lg:flex-row gap-12 lg:gap-20">
           {/* ── LEFT: Booking Form ── */}
           <div className="flex-1">
             <h1 className="text-4xl sm:text-[44px] font-extrabold text-[#0a4a1b] tracking-tight mb-4 leading-tight">
               Request Your Tee Time
             </h1>
-            <p className="text-gray-500 text-lg mb-10 max-w-[500px] leading-relaxed">
+            <p className="text-gray-500 text-lg mb-10 max-w-125 leading-relaxed">
               Provide your player information to finalize your request. Our
               clubhouse will confirm your slot shortly.
             </p>
@@ -427,7 +427,7 @@ const Reserve = () => {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full bg-[#10561c] hover:bg-[#0c4714] disabled:opacity-60 disabled:cursor-not-allowed text-white font-bold py-[18px] rounded-xl transition-all shadow-[0_4px_14px_0_rgba(16,86,28,0.25)] hover:shadow-[0_6px_20px_rgba(16,86,28,0.3)] hover:-translate-y-px text-[17px] mt-2 flex items-center justify-center gap-3"
+                className="w-full bg-[#10561c] hover:bg-[#0c4714] disabled:opacity-60 disabled:cursor-not-allowed text-white font-bold py-4.5 rounded-xl transition-all shadow-[0_4px_14px_0_rgba(16,86,28,0.25)] hover:shadow-[0_6px_20px_rgba(16,86,28,0.3)] hover:-translate-y-px text-[17px] mt-2 flex items-center justify-center gap-3"
               >
                 {isSubmitting ? (
                   <>
@@ -442,7 +442,7 @@ const Reserve = () => {
           </div>
 
           {/* ── RIGHT: Booking Summary ── */}
-          <div className="w-full lg:w-[460px] shrink-0">
+          <div className="w-full lg:w-115 shrink-0">
             <div className="bg-white rounded-[2rem] p-8 shadow-[0_8px_30px_rgb(0,0,0,0.05)] relative overflow-hidden border border-slate-100 lg:sticky lg:top-8">
               <h2 className="text-[26px] font-bold text-[#0a4a1b] mb-7">
                 Booking Summary
@@ -473,7 +473,7 @@ const Reserve = () => {
               <div className="space-y-5">
                 {/* Location */}
                 <div className="flex gap-4 items-center">
-                  <div className="bg-[#f4f5f4] rounded-[14px] p-3 h-[48px] w-[48px] flex items-center justify-center shrink-0">
+                  <div className="bg-[#f4f5f4] rounded-[14px] p-3 h-12 w-12 flex items-center justify-center shrink-0">
                     <MapPin className="w-5 h-5 text-[#10561c]" strokeWidth={2.5} />
                   </div>
                   <div>
@@ -488,7 +488,7 @@ const Reserve = () => {
 
                 {/* Date */}
                 <div className="flex gap-4 items-center">
-                  <div className="bg-[#f4f5f4] rounded-[14px] p-3 h-[48px] w-[48px] flex items-center justify-center shrink-0">
+                  <div className="bg-[#f4f5f4] rounded-[14px] p-3 h-12 w-12 flex items-center justify-center shrink-0">
                     <Calendar className="w-5 h-5 text-[#10561c]" strokeWidth={2.5} />
                   </div>
                   <div>
@@ -503,7 +503,7 @@ const Reserve = () => {
 
                 {/* Time */}
                 <div className="flex gap-4 items-center">
-                  <div className="bg-[#f4f5f4] rounded-[14px] p-3 h-[48px] w-[48px] flex items-center justify-center shrink-0">
+                  <div className="bg-[#f4f5f4] rounded-[14px] p-3 h-12 w-12 flex items-center justify-center shrink-0">
                     <Clock className="w-5 h-5 text-[#10561c]" strokeWidth={2.5} />
                   </div>
                   <div>
@@ -520,7 +520,7 @@ const Reserve = () => {
 
                 {/* Players */}
                 <div className="flex gap-4 items-center">
-                  <div className="bg-[#f4f5f4] rounded-[14px] p-3 h-[48px] w-[48px] flex items-center justify-center shrink-0">
+                  <div className="bg-[#f4f5f4] rounded-[14px] p-3 h-12 w-12 flex items-center justify-center shrink-0">
                     <Users className="w-5 h-5 text-[#10561c]" strokeWidth={2.5} />
                   </div>
                   <div>

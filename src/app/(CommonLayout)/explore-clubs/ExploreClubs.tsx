@@ -121,7 +121,7 @@ const ExploreClubs = () => {
   return (
     <div className="min-h-screen bg-[#fafafa] font-sans text-gray-900 pb-20">
       {/* Header Area */}
-      <div className="max-w-[1400px] mx-auto px-4 md:px-8 pt-10 pb-6">
+      <div className="max-w-350 mx-auto px-4 md:px-8 pt-10 pb-6">
         <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-4">
           <div>
             <p className="text-[10px] md:text-xs font-bold text-gray-500 uppercase tracking-[0.15em] mb-2">
@@ -157,7 +157,7 @@ const ExploreClubs = () => {
         </div>
 
         {/* Search Bar */}
-        <div className="mt-8 relative max-w-[1400px]">
+        <div className="mt-8 relative max-w-350">
           <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
             <Search className="h-5 w-5 text-gray-400" />
           </div>
@@ -172,9 +172,9 @@ const ExploreClubs = () => {
       </div>
 
       {/* Main Content Layout */}
-      <div className="max-w-[1400px] mx-auto px-4 md:px-8 flex flex-col lg:flex-row gap-8">
+      <div className="max-w-350 mx-auto px-4 md:px-8 flex flex-col lg:flex-row gap-8">
         {/* Sidebar Filters */}
-        <aside className="w-full lg:w-[280px] xl:w-[320px] shrink-0">
+        <aside className="w-full lg:w-70 xl:w-[320px] shrink-0">
           <div className="bg-[#f3f4f6] rounded-2xl p-6 lg:p-8">
             {/* Time of Day */}
             <div className="mb-8">
@@ -299,7 +299,7 @@ const ExploreClubs = () => {
                 className="bg-white rounded-[24px] p-3 border border-gray-100 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.03)] flex flex-col md:flex-row gap-6 hover:shadow-[0_8px_30px_-4px_rgba(0,0,0,0.08)] transition-all animate-in fade-in duration-300"
               >
                 {/* Image Box */}
-                <div className="w-full md:w-[45%] h-[240px] md:h-auto min-h-[240px] rounded-[18px] overflow-hidden relative shrink-0 group">
+                <div className="w-full md:w-[45%] h-60 md:h-auto min-h-60 rounded-[18px] overflow-hidden relative shrink-0 group">
                   <div
                     className="absolute inset-0 bg-cover bg-center group-hover:scale-105 transition-transform duration-700"
                     style={{ backgroundImage: `url('${getMediaUrl(course.heroImage?.url) || FALLBACK_IMAGE}')` }}

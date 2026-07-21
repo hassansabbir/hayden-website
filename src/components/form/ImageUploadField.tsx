@@ -46,7 +46,7 @@ const ImageUploadField = ({
                 className={`group relative border-2 border-dashed rounded-xl px-2 pt-4 flex flex-col items-center justify-center space-y-5 cursor-pointer transition-all border-gray-300 hover:border-black/20`}
               >
                 {preview ? (
-                  <div className="relative w-full max-w-[400px] aspect-2/1 bg-white rounded-lg overflow-hidden shadow-sm border border-gray-100 animate-in zoom-in-95 duration-300">
+                  <div className="relative w-full max-w-100 aspect-2/1 bg-white rounded-lg overflow-hidden shadow-sm border border-gray-100 animate-in zoom-in-95 duration-300">
                     <Image
                       src={preview}
                       alt="Logo Preview"

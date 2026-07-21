@@ -389,7 +389,7 @@ const MyBookings = () => {
                         </Link>
                         <Link
                             href="/explore-clubs"
-                            className="px-6 py-3 bg-[#0B4619] text-white rounded-2xl font-bold text-sm hover:bg-[#083512] transition-all shadow-lg shadow-green-900/20 hover:translate-y-[-2px] flex items-center gap-2"
+                            className="px-6 py-3 bg-[#0B4619] text-white rounded-2xl font-bold text-sm hover:bg-[#083512] transition-all shadow-lg shadow-green-900/20 hover:-translate-y-0.5 flex items-center gap-2"
                         >
                             <Plus size={18} />
                             New Booking

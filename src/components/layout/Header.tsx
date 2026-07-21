@@ -70,7 +70,7 @@ const Header = () => {
           : "bg-[#ECF6F1] shadow-sm",
       )}
     >
-      <div className="max-w-[1280px] mx-auto py-1 px-4 flex items-center justify-between">
+      <div className="max-w-7xl mx-auto py-1 px-4 flex items-center justify-between">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2 z-50">
           <div className="relative w-32 h-13 flex items-center">
@@ -144,7 +144,7 @@ const Header = () => {
                     </Avatar>
                     <span
                       className={cn(
-                        "hidden lg:inline text-[15px] font-semibold max-w-[140px] truncate",
+                        "hidden lg:inline text-[15px] font-semibold max-w-35 truncate",
                         useWhiteText ? "text-white" : "text-gray-800",
                       )}
                     >

@@ -69,7 +69,7 @@ const FeatureClub = () => {
   const smallClubs = rest.slice(0, 3);
 
   return (
-    <section className="py-20 px-4 md:px-8 max-w-[1400px] mx-auto w-full font-sans bg-white">
+    <section className="py-20 px-4 md:px-8 max-w-350 mx-auto w-full font-sans bg-white">
       {/* Header Section */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -99,8 +99,8 @@ const FeatureClub = () => {
 
       {isLoading ? (
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6 mb-6">
-          <div className="md:col-span-7 h-[450px] rounded-2xl bg-gray-100 animate-pulse" />
-          <div className="md:col-span-5 h-[450px] rounded-2xl bg-gray-100 animate-pulse" />
+          <div className="md:col-span-7 h-112.5 rounded-2xl bg-gray-100 animate-pulse" />
+          <div className="md:col-span-5 h-112.5 rounded-2xl bg-gray-100 animate-pulse" />
         </div>
       ) : !first ? (
         <p className="text-gray-500 text-center py-16">No featured clubs yet — check back soon.</p>
@@ -117,7 +117,7 @@ const FeatureClub = () => {
             <motion.div
               variants={itemVariants}
               className={cn(
-                "group relative rounded-2xl overflow-hidden h-[450px] shadow-lg cursor-pointer",
+                "group relative rounded-2xl overflow-hidden h-112.5 shadow-lg cursor-pointer",
                 second ? "md:col-span-7" : "md:col-span-12"
               )}
             >
@@ -161,7 +161,7 @@ const FeatureClub = () => {
             {second && (
               <motion.div
                 variants={itemVariants}
-                className="md:col-span-5 group relative rounded-2xl overflow-hidden h-[450px] shadow-lg cursor-pointer"
+                className="md:col-span-5 group relative rounded-2xl overflow-hidden h-112.5 shadow-lg cursor-pointer"
               >
                 <div
                   className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"

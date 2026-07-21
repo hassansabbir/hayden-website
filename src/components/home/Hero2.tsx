@@ -112,7 +112,7 @@ const Hero2 = () => {
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
-            className="bg-white p-8 rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.1)] flex flex-col relative group cursor-pointer hover:translate-y-[-4px] transition-transform duration-300"
+            className="bg-white p-8 rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.1)] flex flex-col relative group cursor-pointer hover:-translate-y-1 transition-transform duration-300"
           >
             <div className="absolute top-8 right-8 text-[#CBD5E1] group-hover:text-[#0B3D2E] transition-colors">
               <ArrowUpRight size={24} />
@@ -137,7 +137,7 @@ const Hero2 = () => {
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
-            className="bg-white p-8 rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.1)] flex flex-col relative group cursor-pointer hover:translate-y-[-4px] transition-transform duration-300"
+            className="bg-white p-8 rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.1)] flex flex-col relative group cursor-pointer hover:-translate-y-1 transition-transform duration-300"
           >
             <div className="w-12 h-12 bg-[#F1F5F9] rounded-lg flex items-center justify-center mb-10">
               <Trophy className="text-[#64748B]" size={24} />

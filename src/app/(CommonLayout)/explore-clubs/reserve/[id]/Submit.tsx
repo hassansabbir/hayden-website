@@ -152,7 +152,7 @@ const Submit = () => {
     <div className="min-h-screen bg-[#fafbfa] font-sans text-slate-900 flex flex-col items-center pt-16 pb-16 px-4 sm:px-6 lg:px-8">
       {/* Success Header */}
       <div className="flex flex-col items-center text-center max-w-2xl mx-auto mb-14">
-        <div className="bg-[#e9eee9] w-[100px] h-[100px] rounded-[24px] flex items-center justify-center mb-7 shadow-inner">
+        <div className="bg-[#e9eee9] w-25 h-25 rounded-[24px] flex items-center justify-center mb-7 shadow-inner">
           <div className="bg-[#10561c] text-white w-14 h-14 rounded-full flex items-center justify-center shadow-lg shadow-[#10561c]/20">
             <Check strokeWidth={3.5} className="w-7 h-7" />
           </div>
@@ -160,20 +160,20 @@ const Submit = () => {
         <h1 className="text-[42px] sm:text-[50px] font-extrabold text-[#0a4a1b] tracking-tight mb-4 leading-tight">
           Request Submitted!
         </h1>
-        <p className="text-[#647167] text-[17px] leading-relaxed max-w-[430px] mx-auto">
+        <p className="text-[#647167] text-[17px] leading-relaxed max-w-107.5 mx-auto">
           Your tee time request has been sent to the clubhouse for confirmation.
           You'll receive an email update shortly.
         </p>
       </div>
 
       {/* Two-column detail layout */}
-      <div className="w-full max-w-[1020px] flex flex-col lg:flex-row gap-7">
+      <div className="w-full max-w-255 flex flex-col lg:flex-row gap-7">
 
         {/* ── Left: Booking Summary Card ── */}
         <div className="flex-[1.3] bg-white rounded-[20px] shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden border border-gray-100 flex flex-col">
 
           {/* Course hero image */}
-          <div className="relative h-[240px] w-full shrink-0">
+          <div className="relative h-60 w-full shrink-0">
             <Image
               src={heroUrl}
               alt={course?.name || "Golf Course"}
@@ -247,7 +247,7 @@ const Submit = () => {
             {/* Players & price footer */}
             <div className="bg-[#f4f6f4] rounded-[14px] p-5 flex justify-between items-center">
               <div className="flex items-center gap-4">
-                <div className="bg-[#c2dfc8] rounded-[12px] p-[10px] flex items-center justify-center">
+                <div className="bg-[#c2dfc8] rounded-[12px] p-2.5 flex items-center justify-center">
                   <Users className="w-5 h-5 text-[#10561c]" strokeWidth={2.5} />
                 </div>
                 <div>
@@ -332,14 +332,14 @@ const Submit = () => {
 
           <Link
             href="/explore-clubs"
-            className="w-full bg-[#0a4a1b] hover:bg-[#073814] text-white font-bold py-[18px] rounded-[14px] transition-all shadow-[0_4px_14px_0_rgba(10,74,27,0.25)] hover:shadow-[0_6px_20px_rgba(10,74,27,0.3)] hover:-translate-y-px text-center text-[16px] block"
+            className="w-full bg-[#0a4a1b] hover:bg-[#073814] text-white font-bold py-4.5 rounded-[14px] transition-all shadow-[0_4px_14px_0_rgba(10,74,27,0.25)] hover:shadow-[0_6px_20px_rgba(10,74,27,0.3)] hover:-translate-y-px text-center text-[16px] block"
           >
             Explore More Clubs
           </Link>
 
           <Link
             href="/"
-            className="w-full border border-[#0a4a1b]/30 hover:border-[#0a4a1b] text-[#0a4a1b] font-bold py-[16px] rounded-[14px] transition-all text-center text-[15px] block hover:bg-[#0a4a1b]/5"
+            className="w-full border border-[#0a4a1b]/30 hover:border-[#0a4a1b] text-[#0a4a1b] font-bold py-4 rounded-[14px] transition-all text-center text-[15px] block hover:bg-[#0a4a1b]/5"
           >
             Return to Home
           </Link>
