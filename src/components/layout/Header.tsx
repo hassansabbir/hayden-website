@@ -158,9 +158,24 @@ const Header = () => {
                     />
                   </button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-48">
-                  <DropdownMenuLabel className="truncate">{user?.name || "My Account"}</DropdownMenuLabel>
+                <DropdownMenuContent align="end" className="w-52">
+                  <DropdownMenuLabel className="flex flex-col gap-1">
+                    <span className="truncate font-bold">{user?.name || "My Account"}</span>
+                    {user?.role && user.role !== "USER" && (
+                      <span className="text-[10px] font-extrabold uppercase tracking-wider text-amber-800 bg-amber-100 px-1.5 py-0.5 rounded w-fit">
+                        {user.role}
+                      </span>
+                    )}
+                  </DropdownMenuLabel>
                   <DropdownMenuSeparator />
+                  {user?.role && user.role !== "USER" && (
+                    <DropdownMenuItem
+                      onClick={() => window.open(process.env.NEXT_PUBLIC_DASHBOARD_URL || "http://localhost:3001", "_blank")}
+                      className="text-emerald-800 font-semibold focus:text-emerald-900 focus:bg-emerald-50 cursor-pointer"
+                    >
+                      Management Dashboard ↗
+                    </DropdownMenuItem>
+                  )}
                   <DropdownMenuItem onClick={() => router.push("/profile")}>
                     Profile
                   </DropdownMenuItem>

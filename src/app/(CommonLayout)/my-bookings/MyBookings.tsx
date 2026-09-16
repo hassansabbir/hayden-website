@@ -18,12 +18,19 @@ import {
     FileText,
     MapPin,
     ChevronRight,
+    AlertTriangle,
+    ShieldAlert,
+    RefreshCw,
+    LayoutDashboard,
+    LogOut,
+    Ban,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { fetchUrl, getMediaUrl } from "@/lib/fetchUrl";
 import useLoginUser from "@/hooks/useUser";
+import { toast } from "sonner";
 
 interface ApiBooking {
     _id: string;
@@ -84,13 +91,38 @@ const fmt$ = (n: number) => `$${n.toFixed(2)}`;
 /* ══════════════════════════════════════════════
    Booking Detail Modal
 ══════════════════════════════════════════════ */
-function BookingModal({ booking, onClose }: { booking: ApiBooking; onClose: () => void }) {
+function BookingModal({
+    booking,
+    onClose,
+    onBookingUpdated,
+}: {
+    booking: ApiBooking;
+    onClose: () => void;
+    onBookingUpdated?: () => void;
+}) {
+    const [isCancelling, setIsCancelling] = useState(false);
+
     // Lock body scroll while modal is open
     useEffect(() => {
         const prev = document.body.style.overflow;
         document.body.style.overflow = "hidden";
         return () => { document.body.style.overflow = prev; };
     }, []);
+
+    const handleCancel = async () => {
+        if (!confirm("Are you sure you want to cancel this booking?")) return;
+        setIsCancelling(true);
+        try {
+            await fetchUrl(`/bookings/${booking._id}/cancel`, { method: "PATCH" });
+            toast.success("Booking cancelled successfully.");
+            onBookingUpdated?.();
+            onClose();
+        } catch (err: any) {
+            toast.error(err.message || "Failed to cancel booking.");
+        } finally {
+            setIsCancelling(false);
+        }
+    };
 
     // Close on backdrop click
     const onBackdrop = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -282,13 +314,29 @@ function BookingModal({ booking, onClose }: { booking: ApiBooking; onClose: () =
                             </div>
                         </div>
 
-                        {/* Close footer */}
-                        <button
-                            onClick={onClose}
-                            className="w-full py-3.5 rounded-2xl border border-slate-200 text-slate-600 font-bold text-sm hover:bg-slate-50 transition-colors cursor-pointer"
-                        >
-                            Close
-                        </button>
+                        {/* Actions footer */}
+                        <div className="flex items-center gap-3 pt-2">
+                            {(booking.status === "PENDING" || booking.status === "CONFIRMED") && (
+                                <button
+                                    onClick={handleCancel}
+                                    disabled={isCancelling}
+                                    className="flex-1 py-3.5 rounded-2xl bg-red-50 hover:bg-red-100 text-red-600 font-bold text-sm transition-colors cursor-pointer flex items-center justify-center gap-2 disabled:opacity-60"
+                                >
+                                    {isCancelling ? (
+                                        <Loader2 className="w-4 h-4 animate-spin" />
+                                    ) : (
+                                        <Ban className="w-4 h-4" />
+                                    )}
+                                    Cancel Booking
+                                </button>
+                            )}
+                            <button
+                                onClick={onClose}
+                                className="flex-1 py-3.5 rounded-2xl border border-slate-200 text-slate-600 font-bold text-sm hover:bg-slate-50 transition-colors cursor-pointer"
+                            >
+                                Close
+                            </button>
+                        </div>
                         </div>
                     </div>
                 </motion.div>
@@ -302,11 +350,36 @@ function BookingModal({ booking, onClose }: { booking: ApiBooking; onClose: () =
 ══════════════════════════════════════════════ */
 const MyBookings = () => {
     const router = useRouter();
-    const { user, isLogin, isLoading: authLoading } = useLoginUser();
+    const { user, isLogin, isLoading: authLoading, logout } = useLoginUser();
     const [activeTab, setActiveTab] = useState<"Upcoming" | "Past">("Upcoming");
     const [bookings, setBookings] = useState<ApiBooking[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState<{ message: string; statusCode?: number } | null>(null);
     const [selected, setSelected] = useState<ApiBooking | null>(null);
+
+    const loadBookings = () => {
+        setIsLoading(true);
+        setError(null);
+        fetchUrl("/bookings/mine?limit=100")
+            .then((res) => {
+                setBookings(res.data || []);
+                setError(null);
+            })
+            .catch((err) => {
+                console.error("Failed to fetch bookings", err);
+                const status = err.statusCode || err.status || 500;
+                const message =
+                    err.message ||
+                    (status === 403
+                        ? "You do not have permission to view personal bookings."
+                        : "Failed to load bookings. Please check your connection and try again.");
+                setError({ message, statusCode: status });
+                toast.error(message);
+            })
+            .finally(() => {
+                setIsLoading(false);
+            });
+    };
 
     useEffect(() => {
         if (!authLoading && !isLogin) {
@@ -314,19 +387,8 @@ const MyBookings = () => {
             return;
         }
 
-        // Wait for the real session token, not just the optimistic cached user cookie
         if (authLoading || !isLogin) return;
-
-        fetchUrl("/bookings/mine?limit=100")
-            .then((res) => {
-                setBookings(res.data || []);
-            })
-            .catch((err) => {
-                console.error("Failed to fetch bookings", err);
-            })
-            .finally(() => {
-                setIsLoading(false);
-            });
+        loadBookings();
     }, [isLogin, authLoading, router]);
 
     const upcomingBookings = bookings.filter((b) => {
@@ -354,11 +416,17 @@ const MyBookings = () => {
     return (
         <>
             {/* ── Booking Detail Modal ── */}
-            {selected && <BookingModal booking={selected} onClose={() => setSelected(null)} />}
+            {selected && (
+                <BookingModal
+                    booking={selected}
+                    onClose={() => setSelected(null)}
+                    onBookingUpdated={loadBookings}
+                />
+            )}
 
             <div className="max-w-7xl mx-auto px-6 py-12">
                 {/* Profile Header */}
-                <div className="flex flex-col md:flex-row items-center md:items-start gap-8 mb-16">
+                <div className="flex flex-col md:flex-row items-center md:items-start gap-8 mb-10">
                     <div className="relative group">
                         <div className="w-32 h-32 md:w-40 md:h-40 rounded-[2rem] overflow-hidden border-4 border-white shadow-xl bg-emerald-100 flex items-center justify-center text-4xl font-bold text-emerald-800">
                             {getInitials(user?.name)}
@@ -397,6 +465,39 @@ const MyBookings = () => {
                     </div>
                 </div>
 
+                {/* Staff / Manager Account Role Banner */}
+                {user?.role && user.role !== "USER" && (
+                    <div className="mb-8 p-5 bg-gradient-to-r from-emerald-50 via-amber-50 to-orange-50 border border-amber-200/80 rounded-2xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-sm">
+                        <div className="flex items-start gap-3.5">
+                            <div className="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center shrink-0 text-amber-700 mt-0.5">
+                                <ShieldAlert className="w-5 h-5" />
+                            </div>
+                            <div>
+                                <div className="flex items-center gap-2">
+                                    <span className="font-bold text-slate-800 text-sm">Administrative Account Notice</span>
+                                    <span className="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-amber-200 text-amber-900 tracking-wider uppercase">
+                                        {user.role}
+                                    </span>
+                                </div>
+                                <p className="text-xs text-slate-600 mt-1 max-w-2xl">
+                                    You are signed in with an administrative role. Personal golfer bookings you create appear below. To manage course schedules, incoming requests, and clubs, switch to the Management Dashboard.
+                                </p>
+                            </div>
+                        </div>
+                        <div className="flex items-center gap-2.5 w-full md:w-auto shrink-0">
+                            <a
+                                href={process.env.NEXT_PUBLIC_DASHBOARD_URL || "http://localhost:3001"}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="flex items-center gap-1.5 px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl text-xs font-bold transition-all shadow-sm"
+                            >
+                                <LayoutDashboard className="w-3.5 h-3.5" />
+                                Open Dashboard
+                            </a>
+                        </div>
+                    </div>
+                )}
+
                 {/* Bookings section */}
                 <div>
                     <div className="flex items-center justify-between mb-8 border-b border-slate-100 pb-4">
@@ -425,6 +526,36 @@ const MyBookings = () => {
                             <div className="flex flex-col items-center justify-center py-20">
                                 <Loader2 className="w-8 h-8 text-emerald-600 animate-spin mb-4" />
                                 <p className="text-slate-500 font-medium">Loading your bookings...</p>
+                            </div>
+                        ) : error ? (
+                            <div className="text-center py-16 px-6 bg-red-50/70 rounded-[2rem] border border-red-200 shadow-sm max-w-2xl mx-auto my-6">
+                                <div className="w-16 h-16 rounded-2xl bg-red-100 text-red-600 flex items-center justify-center mx-auto mb-4">
+                                    {error.statusCode === 403 ? <ShieldAlert className="w-8 h-8" /> : <AlertTriangle className="w-8 h-8" />}
+                                </div>
+                                <h3 className="text-xl font-bold text-red-900 mb-2">
+                                    {error.statusCode === 403 ? "Permission Restriction" : "Unable to load bookings"}
+                                </h3>
+                                <p className="text-sm text-red-700 mb-6 max-w-md mx-auto leading-relaxed">
+                                    {error.message}
+                                </p>
+                                <div className="flex flex-wrap items-center justify-center gap-3">
+                                    <button
+                                        onClick={loadBookings}
+                                        className="inline-flex items-center gap-2 px-5 py-2.5 bg-red-600 text-white rounded-xl text-sm font-bold hover:bg-red-700 transition-colors cursor-pointer shadow-sm shadow-red-600/20"
+                                    >
+                                        <RefreshCw className="w-4 h-4" />
+                                        Try Again
+                                    </button>
+                                    {error.statusCode === 403 && (
+                                        <button
+                                            onClick={logout}
+                                            className="inline-flex items-center gap-2 px-5 py-2.5 bg-white text-slate-700 border border-slate-200 rounded-xl text-sm font-bold hover:bg-slate-50 transition-colors cursor-pointer"
+                                        >
+                                            <LogOut className="w-4 h-4 text-slate-500" />
+                                            Switch Account
+                                        </button>
+                                    )}
+                                </div>
                             </div>
                         ) : displayedBookings.length === 0 ? (
                             <div className="text-center py-20 bg-slate-50 rounded-[2rem] border border-dashed border-slate-200">
