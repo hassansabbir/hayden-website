@@ -1,6 +1,6 @@
 "use client";
 
-import React, { use, useState, useEffect } from "react";
+import React, { use, useState, useEffect, useRef } from "react";
 import {
   Star,
   MapPin,
@@ -101,6 +101,8 @@ export default function ClubDetails({ params }: PageProps) {
   const [loadError, setLoadError] = useState<string | null>(null);
   const [isDroneModalOpen, setIsDroneModalOpen] = useState(false);
   const [activeHoleIndex, setActiveHoleIndex] = useState(0);
+  
+  const dateInputRef = useRef<HTMLInputElement>(null);
 
   const getTodayDateStr = () => {
     const today = new Date();
@@ -650,9 +652,20 @@ export default function ClubDetails({ params }: PageProps) {
                 <label className="text-slate-400 text-xs font-bold uppercase tracking-wider block mb-2.5">
                   1. Choose Date
                 </label>
-                <div className="relative flex items-center w-full p-3.5 rounded-xl border border-slate-200 bg-white focus-within:border-emerald-600 focus-within:ring-1 focus-within:ring-emerald-600 cursor-pointer overflow-hidden hover:border-emerald-300 transition-colors">
+                <div 
+                  className="relative flex items-center w-full p-3.5 rounded-xl border border-slate-200 bg-white focus-within:border-emerald-600 focus-within:ring-1 focus-within:ring-emerald-600 cursor-pointer overflow-hidden hover:border-emerald-300 transition-colors"
+                  onClick={() => {
+                    try {
+                      dateInputRef.current?.showPicker();
+                    } catch (e) {
+                      // Fallback for older browsers
+                      dateInputRef.current?.focus();
+                    }
+                  }}
+                >
                   {/* Invisible native input covering everything */}
                   <input
+                    ref={dateInputRef}
                     type="date"
                     value={selectedDate}
                     onChange={(e) => setSelectedDate(e.target.value)}
